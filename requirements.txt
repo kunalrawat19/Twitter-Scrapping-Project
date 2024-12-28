@@ -1,0 +1,4 @@
+python-dotenv==1.x
+selenium==4.x
+pymongo==4.x
+flask==2.x

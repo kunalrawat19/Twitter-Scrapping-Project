@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Trending Topics</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- CSS Styles -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f8fa;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #1da1f2;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            background-color: #1da1f2;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #0d8adb;
+            transform: translateY(-2px);
+        }
+
+        #results {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #e6ecf0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #f0f8ff;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            color: #333;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        p {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        @media (max-width: 600px) {
+            #results {
+                padding: 15px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Twitter Trending Topics</h1>
+    <!-- Initial Button -->
+    <button id="initialButton" onclick="runScript()">Click here to run the script</button>
+
+    <!-- Results Container -->
+    <div id="results"></div>
+
+    <!-- Second Button (Hidden Initially) -->
+    <button id="runAgainButton" style="display: none;" onclick="runScript()">Run Script Again</button>
+
+    <script>
+        async function runScript() {
+            const response = await fetch("/run-script", { method: "POST" });
+            const display = document.getElementById("results");
+            const initialButton = document.getElementById("initialButton");
+            const runAgainButton = document.getElementById("runAgainButton");
+
+            try {
+                if (response.ok) {
+                    const data = await response.json();
+                    display.innerHTML = `
+                        <p>These are the most happening topics as on ${data.timestamp}:</p>
+                        <ul>
+                            <li>${data.trend1}</li>
+                            <li>${data.trend2}</li>
+                            <li>${data.trend3}</li>
+                            <li>${data.trend4}</li>
+                            <li>${data.trend5}</li>
+                        </ul>
+                        <p>The IP address used for this query was <strong>${data.ip_address}</strong>.</p>
+                        <pre>${JSON.stringify(data, null, 4)}</pre>
+                    `;
+                } else {
+                    const error = await response.text();
+                    display.innerHTML = `<p>Error: ${error}</p>`;
+                }
+            } catch (e) {
+                display.innerHTML = `<p>Error: Failed to parse JSON. Please try again.</p>`;
+                console.error("Parsing error:", e);
+            }
+
+            // Hide initial button and show "Run Again" button after first run
+            initialButton.style.display = "none";
+            runAgainButton.style.display = "block";
+        }
+    </script>
+</body>
+</html>
